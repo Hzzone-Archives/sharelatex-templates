@@ -138,10 +138,10 @@ def download():
         name = info[1]
         download_url = info[2]
         pic = info[3]
-        print(category, name)
-        if not os.path.exists(category):
-            os.mkdir(category)
-        save_dir = os.path.join(category, name)
+        path = os.path.join("templates", category)
+        if not os.path.exists(path):
+            os.mkdir(path)
+        save_dir = os.path.join(path, name)
         if not os.path.exists(save_dir):
             os.mkdir(save_dir)
         save_pic_path = os.path.join(save_dir, name+".jpg")
@@ -152,5 +152,5 @@ def download():
             download_file(download_url, save_zip_path)
 
 if __name__ == "__main__":
-    # dump_to_json()
-    download()
+    dump_to_json()
+    # download()
