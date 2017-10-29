@@ -20,12 +20,20 @@ chmod +x /usr/local/bin/docker-compose
 
 * docker-compose    
   download [docker-compose.yml](https://github.com/sharelatex/sharelatex/blob/master/docker-compose.yml)
-
   ```
   sudo docker-compose up
   ```
 
-* Enjoy yourself, visit http://server_ip
+* To support Chinese
+```
+docker exec -it your_sharelatex_container_id /bin/bash
+tlmgr update --self
+tlmgr option repository http://mirrors.aliyun.com/CTAN/systems/texlive/tlnet/
+tlmgr install scheme-full
+```
+Now waiting for downloading completed.
+
+* Enjoy yourself, all completed please visiting `http://server_ip/`
 
 本来是写给女票的，现在给更需要的人吧!
   ​
