@@ -6,13 +6,14 @@ import os
 import urllib.parse
 import threading
 import time
+import random
 
 BASE_URL = "http://cn.sharelatex.com"
 
 '''
 my own proxy
 '''
-# proxy = [None, '127.0.0.1:1087', '122.114.189.120:16816', '122.114.69.239:16816', '116.62.128.50:16816', '120.26.167.140:16816', '120.26.167.145:16816']
+proxies = [None, "127.0.0.1:1087", '122.114.189.120:16816', '122.114.69.239:16816', '116.62.128.50:16816', '120.26.167.140:16816', '120.26.167.145:16816', '122.114.214.159:16816', '114.67.143.12:16816', '121.42.140.113:16816', '120.24.171.107:16816', '122.114.173.129:16816']
 
 head = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'}
 
@@ -33,33 +34,18 @@ class Template(object):
 def get_response(URL):
     response = None
     index = 0
-    # while not response:
-    #     try:
-    #         response = requests.get(URL, timeout=5, headers=head
-    #                                 , proxies={"http": "http://{}".format(proxy[index])})
-    #     except:
-    #         print("%s has been blocked. Try another!" % str(proxy[index]))
-    #         index += 1
-    #         index = index % len(proxy)
-    #         continue
     while not response:
-        r = requests.get('http://111.230.15.168:8000/?types=0&count=5&country=国内')
-        ip_ports = json.loads(r.text)
-        for x in ip_ports:
-            ip = x[0]
-            port = x[1]
-            proxy = {
-                'http': 'http://%s:%s' % (ip, port),
-                'https': 'http://%s:%s' % (ip, port)
-            }
-            try:
-                response = requests.get(URL, proxies=proxy, timeout=3, headers=head)
-                if response:
-                    print("effective proxy %s!" % proxy)
-                    return response
-            except:
-                requests.get('http://111.230.15.168:8000/delete?ip=%s' % ip)
-                print("delete proxy %s" % proxy)
+        try:
+            proxy = proxies[index]
+            response = requests.get(URL, timeout=5, headers=head
+                                    , proxies={"http": "http://{}".format(proxy)})
+        except:
+            index += 1
+            index = index % len((proxies))
+            print("%s has been blocked. Try another!" % str(proxy))
+            # time.sleep(1)
+            continue
+    return response
 
 '''
 get the teamplate url of kinds of category from sharelatex.com/templates
@@ -118,17 +104,9 @@ def get_each_template_info(EACH_TEMPLATE_URL):
     download_url = template.download_url
     name = template.name
     pic = template.pic_url
-    if not os.path.exists(category):
-        os.mkdir(category)
-    save_dir = os.path.join(category, name)
-    if not os.path.exists(save_dir):
-        os.mkdir(save_dir)
-    save_pic_path = os.path.join(save_dir, name+".jpg")
-    save_zip_path = os.path.join(save_dir, name+".zip")
-    if not os.path.exists(save_pic_path):
-        download_file(pic, save_pic_path)
-    if not os.path.exists(save_zip_path):
-        download_file(download_url, save_zip_path)
+    with open("test.txt", "a") as f:
+        f.write("%s|%s|%s|%s\n" % (category, name, download_url, pic))
+
     return template
 
 def dump_to_json(target="./template.json"):
@@ -138,10 +116,7 @@ def dump_to_json(target="./template.json"):
     threads = [threading.Thread(target=get_each_template_info, args=(each_template,)) for each_template in all_templates]
     for t in threads:
         t.start()
-    time.sleep(1800)
-    # s = json.dumps(all_templates, default=lambda o: o.__dict__, sort_keys=True, indent=4)
-    # with open(target, "w") as f:
-    #     f.write(s)
+    time.sleep(1000)
     print("Template download information has been written to %s" % target)
 
 def download_file(url, save_path):
@@ -155,7 +130,27 @@ def download_file(url, save_path):
     save_file.close()
 
 def download():
-    dump_to_json()
+    with open("test.txt") as f:
+        lines = f.readlines()
+    for line in lines:
+        info = line.split("|")
+        category = info[0]
+        name = info[1]
+        download_url = info[2]
+        pic = info[3]
+        print(category, name)
+        if not os.path.exists(category):
+            os.mkdir(category)
+        save_dir = os.path.join(category, name)
+        if not os.path.exists(save_dir):
+            os.mkdir(save_dir)
+        save_pic_path = os.path.join(save_dir, name+".jpg")
+        save_zip_path = os.path.join(save_dir, name+".zip")
+        if not os.path.exists(save_pic_path):
+            download_file(pic, save_pic_path)
+        if not os.path.exists(save_zip_path):
+            download_file(download_url, save_zip_path)
 
 if __name__ == "__main__":
+    # dump_to_json()
     download()
