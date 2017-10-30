@@ -19,18 +19,32 @@ chmod +x /usr/local/bin/docker-compose
 ```
 
 * docker-compose    
-  download [docker-compose.yml](https://github.com/sharelatex/sharelatex/blob/master/docker-compose.yml)
-  ```
-  sudo docker-compose up
-  ```
+  download [docker-compose.yml](https://github.com/sharelatex/sharelatex/blob/master/docker-compose.yml) 
+```
+sudo docker-compose up
+```
 
 * To support Chinese
 ```
+# install package
 docker exec -it your_sharelatex_container_id /bin/bash
 tlmgr update --self
 tlmgr option repository http://mirrors.aliyun.com/CTAN/systems/texlive/tlnet/
 tlmgr install scheme-full
+# install Chinese fonts
+# copy your personal windows computer's fonts folder.
+# C:\\...\\Fonts, copy to /usr/share/fonts/. for example:
+unzip winfonts.zip
+sudo mv winfonts /usr/share/fonts/
+cd /usr/share/fonts/winfonts
+mkfontscale
+mkfontdir
+fc-cache -fv 
+# below will show the Chinese fonts:
+fc-list :lang=zh-cn 
 ```
+```docker restart your container``` 
+
 Now waiting for downloading completed.
 
 * Enjoy yourself, all completed please visiting `http://server_ip/`

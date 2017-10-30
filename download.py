@@ -130,27 +130,28 @@ def download_file(url, save_path):
     save_file.close()
 
 def download():
-    with open("test.txt") as f:
-        lines = f.readlines()
-    for line in lines:
-        info = line.split("|")
-        category = info[0]
-        name = info[1]
-        download_url = info[2]
-        pic = info[3]
-        path = os.path.join("templates", category)
-        if not os.path.exists(path):
-            os.mkdir(path)
-        save_dir = os.path.join(path, name)
-        if not os.path.exists(save_dir):
-            os.mkdir(save_dir)
-        save_pic_path = os.path.join(save_dir, name+".jpg")
-        save_zip_path = os.path.join(save_dir, name+".zip")
-        if not os.path.exists(save_pic_path):
-            download_file(pic, save_pic_path)
-        if not os.path.exists(save_zip_path):
-            download_file(download_url, save_zip_path)
+    with open("./template.json") as f:
+        s = json.load(f)
+        for t in s:
+            category = t['category']
+            name = t['name']
+            download_url = t['download_url']
+            pic = t['pic_url']
+            path = os.path.join("templates", category)
+            if not os.path.exists(path):
+                os.mkdir(path)
+            save_dir = os.path.join(path, name)
+            if not os.path.exists(save_dir):
+                os.mkdir(save_dir)
+            save_pic_path = os.path.join(save_dir, name + ".jpg")
+            save_zip_path = os.path.join(save_dir, name + ".zip")
+            if not os.path.exists(save_pic_path):
+                print("to download %s" % save_pic_path)
+                download_file(pic, save_pic_path)
+            if not os.path.exists(save_zip_path):
+                print("to download %s" % save_zip_path)
+                download_file(download_url, save_zip_path)
 
 if __name__ == "__main__":
-    dump_to_json()
-    # download()
+    # dump_to_json()
+    download()
