@@ -1,7 +1,8 @@
 #### ShareLaTex Templates
 **These LaTex templates were from [sharelatex.com](https://www.sharelatex.com), organized by their category/template name including .zip file and preview image.**   
 *[download.py](./download.py)* shows how to download templates. Unzip, and then compile.   
-Download link will be updated soon!   
+<del>Download link will be updated soon!</del>  
+[Download link](http://omoitwcai.bkt.clouddn.com/template.zip)    
 **Enjoying your work!**
 
 #### How to start your own sharelatex
